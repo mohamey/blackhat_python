@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import sys
 import socket
 import getopt
@@ -72,10 +74,10 @@ def main():
         # Read in buffer from command line
         # this will block, so send CTRL-D if not sending input
         # to stdin
-        buffer = sys.stdin.readline()
+        # buffer = sys.stdin.readline()
 
         # Send data off
-        client_sender(buffer)
+        client_sender()
 
     # We are going to listen and potentially
     # upload things, execute commands and drop a shell back
@@ -83,15 +85,15 @@ def main():
     if listen:
         server_loop()
 
-def client_sender(buffer):
+def client_sender():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
         # Connect to our target host
         client.connect((target, port))
 
-        if len(buffer):
-            client.send(buffer.encode())
+        #if len(buffer):
+            #client.send(buffer.encode())
 
         while True:
             # Wait for data to come back
@@ -147,7 +149,7 @@ def run_command(command):
     
     # Run the command and get the output back
     try:
-        output = subprocess.check_output(timeout=command, sderr=subprocess.STDOUT, shell=True)
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     except:
         output = "Failed to execute command.\r\n"
     
@@ -205,7 +207,7 @@ def client_handler(client_socket):
             
             # Send back the command output
             response = run_command(cmd_buffer)
-            client_socket.send(response.encode())
+            client_socket.send(response)
 
 main()
 
